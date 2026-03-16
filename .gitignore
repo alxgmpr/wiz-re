@@ -1,2 +1,11 @@
 secrets.yaml
 .esphome/
+.DS_Store
+.claude/
+
+# Downloaded/generated firmware binaries (large, reproducible)
+firmware/*.bin
+firmware/*.elf
+
+# Generated TLS certs
+mqtt/certs/
