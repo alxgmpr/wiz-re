@@ -71,6 +71,35 @@ class WizBulb:
         clean = {k: v for k, v in params.items() if v is not None}
         return self.send({"method": "setEffect", "params": clean})
 
+    def pulse(self, delta: int, duration: int) -> dict | None:
+        return self.send({"method": "pulse", "params": {"delta": delta, "duration": duration}})
+
+    def get_cct_table(self) -> dict | None:
+        return self.send({"method": "getCctTable", "params": {}})
+
+    def get_favs(self) -> dict | None:
+        return self.send({"method": "getFavs", "params": {}})
+
+    def get_scenario(self) -> dict | None:
+        return self.send({"method": "getScenario", "params": {}})
+
+    def get_power(self) -> dict | None:
+        return self.send({"method": "getPower", "params": {}})
+
+    def get_time(self) -> dict | None:
+        return self.send({"method": "getTime", "params": {}})
+
+    def get_effect(self) -> dict | None:
+        return self.send({"method": "getEffect", "params": {}})
+
+    def get_wifi_processing(self) -> dict | None:
+        return self.send({"method": "getWifiProcessing", "params": {}})
+
+    def registration(self, phone_ip: str, phone_mac: str = "aabbccddeeff") -> dict | None:
+        return self.send({"method": "registration", "params": {
+            "phoneMac": phone_mac, "register": True, "phoneIp": phone_ip, "id": "1",
+        }})
+
     def fade(
         self,
         from_dimming: int | None = None,
@@ -160,8 +189,14 @@ def cmd_set_pilot(args, bulb: WizBulb):
         params["g"] = args.g
     if args.b is not None:
         params["b"] = args.b
+    if args.w is not None:
+        params["w"] = args.w
+    if args.c is not None:
+        params["c"] = args.c
     if args.scene is not None:
         params["sceneId"] = args.scene
+    if args.speed is not None:
+        params["speed"] = args.speed
     pp(bulb.set_pilot(**params))
 
 
@@ -181,8 +216,14 @@ def cmd_set_state(args, bulb: WizBulb):
         params["g"] = args.g
     if args.b is not None:
         params["b"] = args.b
+    if args.w is not None:
+        params["w"] = args.w
+    if args.c is not None:
+        params["c"] = args.c
     if args.scene is not None:
         params["sceneId"] = args.scene
+    if args.speed is not None:
+        params["speed"] = args.speed
     pp(bulb.set_state(**params))
 
 
@@ -203,8 +244,11 @@ def cmd_get_dev_info(args, bulb: WizBulb):
 
 
 def cmd_set_effect(args, bulb: WizBulb):
-    # setEffect expects: {"preview": {...}} or {"pulse": {...}}
+    # setEffect expects nested objects: {"preview": {...}}, {"pulse": {...}}, {"stepOff": {...}}
     mode = args.mode or "preview"
+    if args.stop:
+        pp(bulb.set_effect(**{mode: {"state": 0}}))
+        return
     inner: dict = {"state": 1}
     if args.duration is not None:
         inner["duration"] = args.duration
@@ -216,10 +260,59 @@ def cmd_set_effect(args, bulb: WizBulb):
     if args.dimming is not None:
         inner["dimming"] = args.dimming
     if args.scene_id is not None:
-        inner["sceneID"] = args.scene_id
+        inner["sceneId"] = args.scene_id
     if args.speed is not None:
         inner["speed"] = args.speed
-    pp(bulb.set_effect(**{mode: inner}))
+    if args.pulse_count is not None:
+        inner["pulseCount"] = args.pulse_count
+    if args.dim_range is not None:
+        parts = [int(x.strip()) for x in args.dim_range.split(",")]
+        inner["dimRange"] = parts
+    params = {mode: inner}
+    if args.restore:
+        params["orig"] = "current"
+    pp(bulb.set_effect(**params))
+
+
+def cmd_pulse(args, bulb: WizBulb):
+    pp(bulb.pulse(delta=args.delta, duration=args.duration))
+
+
+def cmd_get_cct_table(args, bulb: WizBulb):
+    pp(bulb.get_cct_table())
+
+
+def cmd_get_favs(args, bulb: WizBulb):
+    pp(bulb.get_favs())
+
+
+def cmd_get_scenario(args, bulb: WizBulb):
+    pp(bulb.get_scenario())
+
+
+def cmd_get_power(args, bulb: WizBulb):
+    pp(bulb.get_power())
+
+
+def cmd_get_time(args, bulb: WizBulb):
+    pp(bulb.get_time())
+
+
+def cmd_get_effect(args, bulb: WizBulb):
+    pp(bulb.get_effect())
+
+
+def cmd_get_wifi_processing(args, bulb: WizBulb):
+    pp(bulb.get_wifi_processing())
+
+
+def cmd_registration(args, bulb: WizBulb):
+    pp(bulb.registration(phone_ip=args.phone_ip))
+
+
+def cmd_raw(args, bulb: WizBulb):
+    payload = json.loads(args.json)
+    pp(bulb.send(payload))
 
 
 def cmd_fade(args, bulb: WizBulb):
@@ -247,7 +340,7 @@ def cmd_fade(args, bulb: WizBulb):
 # --------------------------------------------------------------- shared flags
 
 def add_pilot_flags(parser: argparse.ArgumentParser):
-    """Add the common --on/--off, --dimming, --temp, --r/--g/--b, --scene flags."""
+    """Add the common --on/--off, --dimming, --temp, --r/--g/--b, --w/--c, --scene, --fade flags."""
     grp = parser.add_mutually_exclusive_group()
     grp.add_argument("--on", action="store_true", help="turn the bulb on")
     grp.add_argument("--off", action="store_true", help="turn the bulb off")
@@ -256,7 +349,10 @@ def add_pilot_flags(parser: argparse.ArgumentParser):
     parser.add_argument("--r", type=int, metavar="V", help="red channel 0-255")
     parser.add_argument("--g", type=int, metavar="V", help="green channel 0-255")
     parser.add_argument("--b", type=int, metavar="V", help="blue channel 0-255")
-    parser.add_argument("--scene", type=int, metavar="ID", help="scene ID")
+    parser.add_argument("--w", type=int, metavar="V", help="warm white channel 0-255 (bypasses CCT)")
+    parser.add_argument("--c", type=int, metavar="V", help="cold white channel 0-255 (bypasses CCT)")
+    parser.add_argument("--scene", type=int, metavar="ID", help="scene ID (1-35)")
+    parser.add_argument("--speed", type=int, metavar="N", help="scene animation speed 1-100")
 
 
 # --------------------------------------------------------------------- main
@@ -313,18 +409,62 @@ def build_parser() -> argparse.ArgumentParser:
 
     # set-effect
     sp = subs.add_parser("set-effect", help="trigger a lighting effect")
-    sp.add_argument("--mode", choices=["preview", "pulse"], help="effect mode")
-    sp.add_argument("--duration", type=int, metavar="SEC", help="effect duration in seconds")
-    sp.add_argument("--cct", type=int, metavar="K", help="correlated color temperature")
-    sp.add_argument(
-        "--color",
-        metavar="R,G,B,W,C",
-        help="channel values as comma-separated ints (r,g,b,w,c)",
-    )
+    sp.add_argument("--mode", choices=["preview", "pulse", "stepOff"], default="preview", help="effect mode")
+    sp.add_argument("--stop", action="store_true", help="stop the current effect")
+    sp.add_argument("--duration", type=int, metavar="SEC", help="effect duration in seconds (raw ms for stepOff)")
+    sp.add_argument("--cct", type=int, metavar="K", help="correlated color temperature (1000-12000)")
+    sp.add_argument("--color", metavar="R,G,B,W,C", help="5-channel values as comma-separated ints")
     sp.add_argument("--dimming", type=int, metavar="N", help="brightness 10-100")
-    sp.add_argument("--scene-id", type=int, metavar="ID", help="scene ID for effect")
-    sp.add_argument("--speed", type=int, metavar="N", help="effect speed")
+    sp.add_argument("--scene-id", type=int, metavar="ID", help="scene ID (1-35)")
+    sp.add_argument("--speed", type=int, metavar="N", help="effect speed 1-100")
+    sp.add_argument("--pulse-count", type=int, metavar="N", help="number of pulse repetitions")
+    sp.add_argument("--dim-range", metavar="MIN,MAX", help="brightness range as min,max")
+    sp.add_argument("--restore", action="store_true", help="restore original state after effect")
     sp.set_defaults(func=cmd_set_effect)
+
+    # pulse (standalone method)
+    sp = subs.add_parser("pulse", help="brightness pulse (standalone method)")
+    sp.add_argument("--delta", type=int, required=True, help="brightness change (-100 to +100)")
+    sp.add_argument("--duration", type=int, required=True, help="pulse duration in milliseconds")
+    sp.set_defaults(func=cmd_pulse)
+
+    # get-cct-table
+    sp = subs.add_parser("get-cct-table", help="query CCT-to-RGBWC channel mapping")
+    sp.set_defaults(func=cmd_get_cct_table)
+
+    # get-favs
+    sp = subs.add_parser("get-favs", help="query WizClick favorites")
+    sp.set_defaults(func=cmd_get_favs)
+
+    # get-scenario
+    sp = subs.add_parser("get-scenario", help="query automation scenario config")
+    sp.set_defaults(func=cmd_get_scenario)
+
+    # get-power
+    sp = subs.add_parser("get-power", help="query power consumption")
+    sp.set_defaults(func=cmd_get_power)
+
+    # get-time
+    sp = subs.add_parser("get-time", help="query bulb UTC time")
+    sp.set_defaults(func=cmd_get_time)
+
+    # get-effect
+    sp = subs.add_parser("get-effect", help="query current effect state")
+    sp.set_defaults(func=cmd_get_effect)
+
+    # get-wifi-processing
+    sp = subs.add_parser("get-wifi-processing", help="query WiFi sensing configuration")
+    sp.set_defaults(func=cmd_get_wifi_processing)
+
+    # registration
+    sp = subs.add_parser("registration", help="register with bulb (app discovery)")
+    sp.add_argument("--phone-ip", default="10.1.7.1", help="phone/controller IP")
+    sp.set_defaults(func=cmd_registration)
+
+    # raw
+    sp = subs.add_parser("raw", help="send raw JSON payload")
+    sp.add_argument("json", help='JSON string, e.g. \'{"method":"getPilot","params":{}}\'')
+    sp.set_defaults(func=cmd_raw)
 
     # fade
     sp = subs.add_parser("fade", help="software fade ramp (dimming, temp, and/or RGB)")

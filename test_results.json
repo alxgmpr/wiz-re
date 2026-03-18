@@ -1,0 +1,2082 @@
+{
+  "getPilot": [
+    {
+      "params": {},
+      "response": {
+        "method": "getPilot",
+        "env": "pro",
+        "result": {
+          "mac": "444f8e3136ba",
+          "rssi": -53,
+          "src": "",
+          "state": true,
+          "sceneId": 11,
+          "temp": 2700,
+          "dimming": 100
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getDevInfo": [
+    {
+      "params": {},
+      "response": {
+        "method": "getDevInfo",
+        "env": "pro",
+        "result": {
+          "mac": "444f8e3136ba",
+          "devMac": "444f8e3136ba",
+          "moduleName": "ESP24_SHRGB_01"
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getSystemConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "getSystemConfig",
+        "env": "pro",
+        "result": {
+          "mac": "444f8e3136ba",
+          "homeId": 19223990,
+          "roomId": 32246726,
+          "rgn": "eu",
+          "moduleName": "ESP24_SHRGB_01",
+          "fwVersion": "1.30.1",
+          "groupId": 0,
+          "ping": 0
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getUserConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "getUserConfig",
+        "env": "pro",
+        "result": {
+          "fadeIn": 0,
+          "fadeOut": 0,
+          "dftDim": 100,
+          "opMode": 0,
+          "po": false,
+          "minDimming": 0,
+          "tapSensor": 1
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getModelConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "getModelConfig",
+        "env": "pro",
+        "result": {
+          "ps": 1,
+          "pwmFreq": 200,
+          "pwmRes": 11,
+          "pwmRange": [
+            0,
+            100
+          ],
+          "wcr": 20,
+          "nowc": 1,
+          "cctRange": [
+            1500,
+            2200,
+            4000,
+            6500
+          ],
+          "renderFactor": [
+            55,
+            255,
+            0,
+            255,
+            80,
+            80,
+            30,
+            70,
+            255,
+            255
+          ],
+          "noSmartConf": 0,
+          "hasCctTable": 14,
+          "drvIface": 4,
+          "i2cDrv": [
+            {
+              "chip": "BP5758D",
+              "addr": 255,
+              "freq": 200,
+              "curr": [
+                28,
+                28,
+                28,
+                48,
+                48
+              ],
+              "output": [
+                3,
+                2,
+                1,
+                4,
+                5
+              ]
+            },
+            {
+              "chip": "NONE",
+              "addr": 0,
+              "freq": 0,
+              "curr": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "output": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "chip": "NONE",
+              "addr": 0,
+              "freq": 0,
+              "curr": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "output": [
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getEffect": [
+    {
+      "params": {},
+      "response": {
+        "method": "getEffect",
+        "env": "pro",
+        "result": {
+          "effect": {
+            "state": false
+          }
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getTelemetry": [
+    {
+      "params": {},
+      "response": {
+        "method": "getTelemetry",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getFavs": [
+    {
+      "params": {},
+      "response": {
+        "method": "getFavs",
+        "env": "pro",
+        "result": {
+          "favs": [
+            [
+              11,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              12,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              15,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              5,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "opts": [
+            [],
+            [],
+            [],
+            []
+          ]
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getSensor": [
+    {
+      "params": {},
+      "response": {
+        "method": "getSensor",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    }
+  ],
+  "getLuxSensing": [
+    {
+      "params": {},
+      "response": {
+        "method": "getLuxSensing",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getAcc": [
+    {
+      "params": {},
+      "response": {
+        "method": "getAcc",
+        "env": "pro",
+        "result": {
+          "accs": []
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getTime": [
+    {
+      "params": {},
+      "response": {
+        "method": "getTime",
+        "env": "pro",
+        "result": {
+          "utc": 1773703281
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getPower": [
+    {
+      "params": {},
+      "response": {
+        "method": "getPower",
+        "env": "pro",
+        "result": {
+          "power": 0
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getCctTable": [
+    {
+      "params": {},
+      "response": {
+        "method": "getCctTable",
+        "env": "pro",
+        "result": {
+          "confTs": 1748148749,
+          "cctPoints": [
+            [
+              1500,
+              255,
+              0,
+              0,
+              65,
+              0
+            ],
+            [
+              1800,
+              255,
+              0,
+              0,
+              160,
+              0
+            ],
+            [
+              2000,
+              225,
+              15,
+              0,
+              255,
+              0
+            ],
+            [
+              2200,
+              180,
+              40,
+              0,
+              255,
+              0
+            ],
+            [
+              2400,
+              80,
+              20,
+              0,
+              255,
+              45
+            ],
+            [
+              2700,
+              35,
+              25,
+              0,
+              255,
+              100
+            ],
+            [
+              3000,
+              10,
+              15,
+              0,
+              255,
+              255
+            ],
+            [
+              3200,
+              0,
+              15,
+              0,
+              195,
+              255
+            ],
+            [
+              3500,
+              0,
+              15,
+              3,
+              100,
+              255
+            ],
+            [
+              4000,
+              0,
+              0,
+              0,
+              0,
+              255
+            ],
+            [
+              4500,
+              0,
+              25,
+              20,
+              15,
+              255
+            ],
+            [
+              5000,
+              0,
+              30,
+              30,
+              0,
+              255
+            ],
+            [
+              6000,
+              0,
+              65,
+              65,
+              0,
+              255
+            ],
+            [
+              6500,
+              0,
+              90,
+              70,
+              0,
+              255
+            ]
+          ],
+          "maxCctPower": 4000
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getColorProfile": [
+    {
+      "params": {},
+      "response": {
+        "method": "getColorProfile",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getWifiBeaconing": [
+    {
+      "params": {},
+      "response": {
+        "method": "getWifiBeaconing",
+        "env": "pro",
+        "result": {
+          "enable": 0
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getWifiProcessing": [
+    {
+      "params": {},
+      "response": {
+        "method": "getWifiProcessing",
+        "env": "pro",
+        "result": {
+          "beaconMac": "000000000000",
+          "windowSize": 30,
+          "stepSize": 15,
+          "sensitivity": 40
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getWifiProcessingData": [
+    {
+      "params": {},
+      "response": {
+        "method": "getWifiProcessingData",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getScenario": [
+    {
+      "params": {},
+      "response": {
+        "method": "getScenario",
+        "env": "pro",
+        "result": {
+          "scnrId": 0,
+          "confTs": 0,
+          "trig": 0,
+          "idle": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            0,
+            0
+          ],
+          "action": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            0,
+            0
+          ],
+          "actionDur": 0
+        }
+      },
+      "status": "OK"
+    }
+  ],
+  "getSensorConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "getSensorConfig",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getPowerProfile": [
+    {
+      "params": {},
+      "response": {
+        "method": "getPowerProfile",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getIotpOTAStatus": [
+    {
+      "params": {},
+      "response": {
+        "method": "getIotpOTAStatus",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "getTest": [
+    {
+      "params": {},
+      "response": {
+        "method": "getTest",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "registration": [
+    {
+      "params": {},
+      "response": {
+        "method": "registration",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "phoneIp": "10.1.7.1",
+        "register": true,
+        "phoneOs": "linux",
+        "id": "test"
+      },
+      "response": {
+        "method": "registration",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    }
+  ],
+  "devDebug": [
+    {
+      "params": {},
+      "response": {
+        "method": "devDebug",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "syncBroadcastPilot": [
+    {
+      "params": {},
+      "response": {
+        "_error": "TIMEOUT (no response)"
+      },
+      "status": "TIMEOUT"
+    }
+  ],
+  "syncScnrEvt": [
+    {
+      "params": {},
+      "response": {
+        "method": "syncScnrEvt",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "syncTest": [
+    {
+      "params": {},
+      "response": {
+        "method": "syncTest",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "syncSchdPset": [
+    {
+      "params": {},
+      "response": {
+        "method": "syncSchdPset",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "syncOffset": [
+    {
+      "params": {},
+      "response": {
+        "method": "syncOffset",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "syncAmbience": [
+    {
+      "params": {},
+      "response": {
+        "method": "syncAmbience",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "spaceSenseChecking": [
+    {
+      "params": {},
+      "response": {
+        "method": "spaceSenseChecking",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "spaceSenseTelemetry": [
+    {
+      "params": {},
+      "response": {
+        "method": "spaceSenseTelemetry",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "camSelfTest": [
+    {
+      "params": {},
+      "response": {
+        "method": "camSelfTest",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "bug": [
+    {
+      "params": {},
+      "response": {
+        "method": "bug",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setEffect": [
+    {
+      "params": {},
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 0
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 1
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 2
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 3
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 4
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 1,
+        "duration": 5,
+        "cct": 3000,
+        "dimming": 50
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 2,
+        "duration": 5,
+        "cct": 3000,
+        "dimming": 50
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 1,
+        "duration": 5,
+        "sceneId": 4
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 1,
+        "speed": 50,
+        "duration": 10
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "mode": 1,
+        "duration": 5,
+        "color": [
+          255,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "response": {
+        "method": "setEffect",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    }
+  ],
+  "setState": [
+    {
+      "params": {},
+      "response": {
+        "method": "setState",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setExtendedLightMode": [
+    {
+      "params": {},
+      "response": {
+        "method": "setExtendedLightMode",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    },
+    {
+      "params": {
+        "mode": 0
+      },
+      "response": {
+        "method": "setExtendedLightMode",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    },
+    {
+      "params": {
+        "mode": 1
+      },
+      "response": {
+        "method": "setExtendedLightMode",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    },
+    {
+      "params": {
+        "mode": 2
+      },
+      "response": {
+        "method": "setExtendedLightMode",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setScenario": [
+    {
+      "params": {},
+      "response": {
+        "method": "setScenario",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setTest": [
+    {
+      "params": {},
+      "response": {
+        "method": "setTest",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setLuxSensing": [
+    {
+      "params": {},
+      "response": {
+        "method": "setLuxSensing",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setAccDisc": [
+    {
+      "params": {},
+      "response": {
+        "method": "setAccDisc",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setPairingAssist": [
+    {
+      "params": {},
+      "response": {
+        "method": "setPairingAssist",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setWifiBeaconing": [
+    {
+      "params": {},
+      "response": {
+        "method": "setWifiBeaconing",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setWifiProcessing": [
+    {
+      "params": {},
+      "response": {
+        "method": "setWifiProcessing",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setSyncboxListener": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSyncboxListener",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setCommissioning": [
+    {
+      "params": {},
+      "response": {
+        "method": "setCommissioning",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setSensorConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSensorConfig",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setPowerProfile": [
+    {
+      "params": {},
+      "response": {
+        "method": "setPowerProfile",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setCctTable": [
+    {
+      "params": {},
+      "response": {
+        "method": "setCctTable",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setColorProfile": [
+    {
+      "params": {},
+      "response": {
+        "method": "setColorProfile",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setSchd": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSchd",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setSchdPset": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSchdPset",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setWifi": [
+    {
+      "params": {},
+      "response": {
+        "method": "setWifi",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setDevInfo": [
+    {
+      "params": {},
+      "response": {
+        "method": "setDevInfo",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "applyUpdate": [
+    {
+      "params": {},
+      "response": {
+        "method": "applyUpdate",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "resetFan": [
+    {
+      "params": {},
+      "response": {
+        "method": "resetFan",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "reset": [
+    {
+      "params": {},
+      "response": {
+        "method": "reset",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "resetCert": [
+    {
+      "params": {},
+      "response": {
+        "method": "resetCert",
+        "env": "pro",
+        "error": {
+          "code": -32601,
+          "message": "Method not found"
+        }
+      },
+      "status": "ERROR(-32601)"
+    }
+  ],
+  "setSecurity": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSecurity",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setUserConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "setUserConfig",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setFavs": [
+    {
+      "params": {},
+      "response": {
+        "method": "setFavs",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "updateOta": [
+    {
+      "params": {},
+      "response": {
+        "method": "updateOta",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setWiZClick": [
+    {
+      "params": {},
+      "response": {
+        "method": "setWiZClick",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "reboot": [
+    {
+      "params": {},
+      "response": {
+        "method": "reboot",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setModelConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "setModelConfig",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setSensor": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSensor",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setSystemConfig": [
+    {
+      "params": {},
+      "response": {
+        "method": "setSystemConfig",
+        "env": "pro",
+        "error": {
+          "code": -32600,
+          "message": "Invalid Request"
+        }
+      },
+      "status": "ERROR(-32600)"
+    }
+  ],
+  "setPilot": [
+    {
+      "params": {
+        "dimming": 1
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "dimming": 5
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "dimming": 9
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "dimming": 10
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 4000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 0
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "sceneId": 1
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 2
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 3
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 4
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 5
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 6
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 7
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 8
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 9
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 10
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 11
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 12
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 13
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 14
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 15
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 16
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 17
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 18
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 19
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 20
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 25
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 27
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 28
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 29
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 30
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 31
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 32
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 35
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "sceneId": 100
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "sceneId": 1000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "error": {
+          "code": -32602,
+          "message": "Invalid params"
+        }
+      },
+      "status": "ERROR(-32602)"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 4000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 3000,
+        "speed": 50
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 3000,
+        "ratio": 50
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "r": 255,
+        "g": 0,
+        "b": 0,
+        "w": 100,
+        "c": 0
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "r": 255,
+        "g": 0,
+        "b": 0,
+        "w": 0,
+        "c": 0,
+        "dimming": 100
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "cnx": 1
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 3000,
+        "fadeIn": 1000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 3000,
+        "fadeOut": 1000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    },
+    {
+      "params": {
+        "state": true,
+        "dimming": 50,
+        "temp": 4000
+      },
+      "response": {
+        "method": "setPilot",
+        "env": "pro",
+        "result": {
+          "success": true
+        }
+      },
+      "status": "OK"
+    }
+  ]
+}
