@@ -11,7 +11,13 @@ import http.server
 import os
 import sys
 
-FIRMWARE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def resolve_firmware_path(arg):
+    """Resolve firmware path: try as-is first, then relative to script dir."""
+    if os.path.isabs(arg) or os.path.exists(arg):
+        return os.path.abspath(arg)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, arg)
 
 
 class OTAHandler(http.server.BaseHTTPRequestHandler):
@@ -28,13 +34,13 @@ class OTAHandler(http.server.BaseHTTPRequestHandler):
             # the FIRST completed transfer, first (original) on retries
             if len(sys.argv) > 2:
                 if req_num == 1:
-                    firmware_file = os.path.join(FIRMWARE_DIR, sys.argv[2])
+                    firmware_file = resolve_firmware_path(sys.argv[2])
                     print(f"    SWITCH: serving patched FIRST (request #{req_num})")
                 else:
-                    firmware_file = os.path.join(FIRMWARE_DIR, sys.argv[1])
+                    firmware_file = resolve_firmware_path(sys.argv[1])
                     print(f"    BAIT: serving original on retry (request #{req_num})")
             else:
-                firmware_file = os.path.join(FIRMWARE_DIR, sys.argv[1] if len(sys.argv) > 1 else "ESP24_SHRGB_01_1.36.1.patched.bin")
+                firmware_file = resolve_firmware_path(sys.argv[1] if len(sys.argv) > 1 else "ESP24_SHRGB_01_1.36.1.patched.bin")
 
             if not os.path.exists(firmware_file):
                 print(f"    ERROR: {firmware_file} not found!")
@@ -63,7 +69,8 @@ class OTAHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     port = 80
     fw = sys.argv[1] if len(sys.argv) > 1 else "ESP24_SHRGB_01_1.36.1.patched.bin"
-    print(f"Serving {fw} on port {port}")
+    firmware_file = resolve_firmware_path(fw)
+    print(f"Serving {firmware_file} on port {port}")
     print(f"Waiting for bulb to request firmware...")
     print(f"The bulb will request: GET /firmwares/ESP24_SHRGB_01/*/wizlight.bin")
     print()

@@ -114,9 +114,20 @@ def recalculate_checksum(data):
 
 
 def recalculate_hash(data):
-    """Recalculate the SHA256 validation hash at the end of the image."""
-    # The last 32 bytes of the image are the SHA256 hash of everything before them
-    hash_offset = len(data) - 32
+    """Recalculate the SHA256 validation hash after the checksum byte."""
+    # The hash is at checksum_pos + 1, NOT at the end of the file.
+    # The file may have sector-alignment padding (0xFF) after the hash.
+    seg_count = data[1]
+    offset = 24
+    for i in range(seg_count):
+        _, seg_len = struct.unpack_from('<II', data, offset)
+        offset += 8 + seg_len
+
+    checksum_pos = offset
+    while checksum_pos % 16 != 15:
+        checksum_pos += 1
+
+    hash_offset = checksum_pos + 1
     new_hash = hashlib.sha256(data[:hash_offset]).digest()
     return hash_offset, new_hash
 
@@ -162,11 +173,23 @@ def patch(inpath):
     data[cksum_pos] = cksum_val
     print(f"Checksum: 0x{old_cksum:02x} -> 0x{cksum_val:02x} (at 0x{cksum_pos:06x})")
 
-    # Recalculate validation hash
+    # Recalculate validation hash (right after checksum)
     hash_off, new_hash = recalculate_hash(data)
     old_hash = data[hash_off:hash_off + 32].hex()
     data[hash_off:hash_off + 32] = new_hash
-    print(f"SHA256: {old_hash[:16]}... -> {new_hash.hex()[:16]}...")
+    print(f"Image SHA256: {old_hash[:16]}... -> {new_hash.hex()[:16]}... (at 0x{hash_off:06x})")
+
+    # Recalculate signature block hash (covers 0 to sig_start)
+    hash_end = hash_off + 32
+    sig_start = (hash_end + 0xFFF) & ~0xFFF  # next 0x1000-aligned boundary
+    if sig_start + 1216 <= len(data) and data[sig_start] == 0xE7 and data[sig_start + 1] == 0x02:
+        sig_hash_off = sig_start + 4
+        old_sig_hash = data[sig_hash_off:sig_hash_off + 32].hex()
+        new_sig_hash = hashlib.sha256(data[:sig_start]).digest()
+        data[sig_hash_off:sig_hash_off + 32] = new_sig_hash
+        print(f"Sig block SHA256: {old_sig_hash[:16]}... -> {new_sig_hash.hex()[:16]}... (at 0x{sig_hash_off:06x})")
+    else:
+        print("No signature block found")
 
     # Write patched firmware
     outpath = inpath.rsplit('.', 1)[0] + '.patched.bin'
