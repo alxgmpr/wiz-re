@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
-# Send an MQTT command to the Wiz bulb via local Mosquitto
-# Usage: ./send_mqtt.sh '{"method":"setUserConfig","params":{...}}'
+# Send an MQTT command to a Wiz bulb via local Mosquitto
+# Usage: ./send_mqtt.sh <mac> '<json_payload>'
 set -euo pipefail
 
 MQTT_HOST="${MQTT_HOST:-localhost}"
 MQTT_PORT="${MQTT_PORT:-8883}"
-HOME_ID="19223990"
-MAC="444f8e3136ba"
-TOPIC="OP/pro/${HOME_ID}/devices/${MAC}"
+HOME_ID="${HOME_ID:-19223990}"
 CERT_DIR="$(dirname "$0")/certs"
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 '<json_payload>'"
-  echo "Example: $0 '{\"method\":\"getUserConfig\",\"params\":{}}'"
+if [ $# -lt 2 ]; then
+  echo "Usage: $0 <mac> '<json_payload>'"
+  echo "Example: $0 444f8e3136ba '{\"method\":\"getUserConfig\",\"params\":{}}'"
   exit 1
 fi
 
+MAC="$1"
+shift
+TOPIC="OP/pro/${HOME_ID}/devices/${MAC}"
+
+PAYLOAD="$1"
+
 echo "Publishing to ${TOPIC}:"
-echo "$1" | python3 -m json.tool 2>/dev/null || echo "$1"
+echo "$PAYLOAD" | python3 -m json.tool 2>/dev/null || echo "$PAYLOAD"
 echo ""
 
 mosquitto_pub \
@@ -26,6 +30,6 @@ mosquitto_pub \
   -h "$MQTT_HOST" \
   -p "$MQTT_PORT" \
   -t "$TOPIC" \
-  -m "$1"
+  -m "$PAYLOAD"
 
 echo "Sent."
