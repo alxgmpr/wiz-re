@@ -1,3 +1,7 @@
+# macOS resource fork / AppleDouble files
+._*
+.DS_Store
+
 secrets.yaml
 .esphome/
 .DS_Store
