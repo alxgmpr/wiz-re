@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Example MQTT commands for the Wiz bulb
-# Run these with: ./send_mqtt.sh '<payload>'
+# Run these with: WIZ_MAC=<mac> WIZ_HOME_ID=<homeId> ./send_mqtt.sh '<payload>'
 #
 # IMPORTANT: userConfigTs and favConfigTs must be incremented
 # each time you send the respective command. Query current value

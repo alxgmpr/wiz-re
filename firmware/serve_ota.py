@@ -62,7 +62,7 @@ class OTAHandler(http.server.BaseHTTPRequestHandler):
             except BrokenPipeError:
                 print(f"    Bulb disconnected mid-download (request #{req_num})")
         else:
-            print(f"    404 — not a firmware request")
+            print("    404 — not a firmware request")
             self.send_error(404)
 
 
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     fw = sys.argv[1] if len(sys.argv) > 1 else "ESP24_SHRGB_01_1.36.1.patched.bin"
     firmware_file = resolve_firmware_path(fw)
     print(f"Serving {firmware_file} on port {port}")
-    print(f"Waiting for bulb to request firmware...")
-    print(f"The bulb will request: GET /firmwares/ESP24_SHRGB_01/*/wizlight.bin")
+    print("Waiting for bulb to request firmware...")
+    print("The bulb will request: GET /firmwares/ESP24_SHRGB_01/*/wizlight.bin")
     print()
 
     server = http.server.HTTPServer(("", port), OTAHandler)
