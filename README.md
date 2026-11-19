@@ -92,3 +92,7 @@ These send real commands to a live bulb (`WIZ_IP` or `--ip`). Calls that can res
 
 - [pywizlight](https://github.com/sbidy/pywizlight) — Python library for Wiz bulbs, covers ~15 methods. Powers the Home Assistant integration. [Issue #155](https://github.com/sbidy/pywizlight/issues/155) has community protocol notes that were a starting point for this work.
 - [Wiz Pro API docs](https://docs.pro.wizconnected.com/) — Official docs for the commercial/pro line. Some overlap with consumer protocol but not 1:1.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
