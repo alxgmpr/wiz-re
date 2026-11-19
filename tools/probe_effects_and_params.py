@@ -2,7 +2,7 @@
 """Deep-dive probing of setEffect, pulse, and undocumented parameters.
 
 Sends real commands to a live bulb and leaves it at 2700K/100%.
-reset probes only run with --dangerous.
+Config-writing probes (setScenario, setWifi*, setCctTable) and reset only run with --dangerous.
 """
 
 import argparse
@@ -16,10 +16,7 @@ bulb: WizBulb
 
 
 def send(method, params=None):
-    try:
-        return bulb.call(method, params) or {"_error": "TIMEOUT"}
-    except Exception as e:
-        return {"_error": str(e)}
+    return bulb.probe(method, params)
 
 
 def test(label, method, params):
@@ -39,9 +36,10 @@ def restore():
 def main():
     global bulb
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--ip", default=os.environ.get("WIZ_IP"), required="WIZ_IP" not in os.environ)
-    ap.add_argument("--port", type=int, default=38899)
-    ap.add_argument("--dangerous", action="store_true", help="also probe reset")
+    ip = os.environ.get("WIZ_IP") or None
+    ap.add_argument("--ip", default=ip, required=ip is None)
+    ap.add_argument("--port", type=int, default=int(os.environ.get("WIZ_PORT", "38899")))
+    ap.add_argument("--dangerous", action="store_true", help="also run config-writing and reset probes")
     args = ap.parse_args()
     bulb = WizBulb(args.ip, args.port, timeout=2.0)
 
@@ -110,34 +108,35 @@ def main():
     test("registration phoneMac", "registration", {"phoneMac": "aabbccddeeff", "register": True, "phoneIp": "192.0.2.1", "id": "1"})
     test("registration homeId", "registration", {"homeId": int(os.environ.get("WIZ_HOME_ID", "0")), "id": "1", "register": True, "phoneMac": "aabbccddeeff", "phoneIp": "192.0.2.1"})
 
-    print("\n" + "=" * 80)
-    print("SETSCENARIO PARAMETER PROBING")
-    print("=" * 80)
+    if args.dangerous:
+        print("\n" + "=" * 80)
+        print("SETSCENARIO PARAMETER PROBING")
+        print("=" * 80)
 
-    # getScenario returned: scnrId, confTs, trig, idle, action, actionDur
-    test("setScenario basic", "setScenario", {"scnrId": 1, "trig": 1, "confTs": 1})
-    test("setScenario with idle+action", "setScenario", {
-        "scnrId": 1, "confTs": 1, "trig": 1,
-        "idle": [1, 0, 0, 0, 0, [0, 0, 0, 0, 0], 0, 0],
-        "action": [1, 100, 2700, 0, 0, [0, 0, 0, 0, 0], 0, 0],
-        "actionDur": 300
-    })
+        # getScenario returned: scnrId, confTs, trig, idle, action, actionDur
+        test("setScenario basic", "setScenario", {"scnrId": 1, "trig": 1, "confTs": 1})
+        test("setScenario with idle+action", "setScenario", {
+            "scnrId": 1, "confTs": 1, "trig": 1,
+            "idle": [1, 0, 0, 0, 0, [0, 0, 0, 0, 0], 0, 0],
+            "action": [1, 100, 2700, 0, 0, [0, 0, 0, 0, 0], 0, 0],
+            "actionDur": 300
+        })
 
-    print("\n" + "=" * 80)
-    print("SETWIFIBEACONING / SETWIFIPROCESSING PROBING")
-    print("=" * 80)
+        print("\n" + "=" * 80)
+        print("SETWIFIBEACONING / SETWIFIPROCESSING PROBING")
+        print("=" * 80)
 
-    # getWifiBeaconing returned: {"enable": 0}
-    # getWifiProcessing returned: {"beaconMac": "000000000000", "windowSize": 30, "stepSize": 15, "sensitivity": 40}
-    test("setWifiBeaconing enable=1", "setWifiBeaconing", {"enable": 1})
-    test("setWifiProcessing", "setWifiProcessing", {"beaconMac": "000000000000", "windowSize": 30, "stepSize": 15, "sensitivity": 40})
+        # getWifiBeaconing returned: {"enable": 0}
+        # getWifiProcessing returned: {"beaconMac": "000000000000", "windowSize": 30, "stepSize": 15, "sensitivity": 40}
+        test("setWifiBeaconing enable=1", "setWifiBeaconing", {"enable": 1})
+        test("setWifiProcessing", "setWifiProcessing", {"beaconMac": "000000000000", "windowSize": 30, "stepSize": 15, "sensitivity": 40})
 
-    print("\n" + "=" * 80)
-    print("SETCCTABLE PROBING")
-    print("=" * 80)
+        print("\n" + "=" * 80)
+        print("SETCCTABLE PROBING")
+        print("=" * 80)
 
-    # Try to modify the CCT table
-    test("setCctTable single point", "setCctTable", {"cctPoints": [[2700, 0, 0, 0, 255, 100]], "confTs": 1748148750})
+        # Try to modify the CCT table
+        test("setCctTable single point", "setCctTable", {"cctPoints": [[2700, 0, 0, 0, 255, 100]], "confTs": 1748148750})
 
     print("\n" + "=" * 80)
     print("ADDITIONAL UNDOCUMENTED PARAMS IN SETPILOT")

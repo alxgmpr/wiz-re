@@ -12,17 +12,12 @@ import time
 from wiz_udp import WizBulb
 
 # Skipped unless --dangerous: these can reset, reboot, or reconfigure the bulb
-# if accepted (e.g. on firmware patched with firmware/patch_firmware.py).
-DANGEROUS = {"reset", "resetCert", "setWifi", "setSecurity", "applyUpdate",
-             "setDevInfo", "reboot", "updateOta", "setSystemConfig", "setModelConfig"}
-
-
-def send(bulb, method, params=None):
-    """Send a method call; return the response or an {"_error": ...} dict."""
-    try:
-        return bulb.call(method, params) or {"_error": "TIMEOUT (no response)"}
-    except Exception as e:
-        return {"_error": str(e)}
+# if accepted. Includes everything firmware/patch_firmware.py unlocks over UDP.
+DANGEROUS = {"reset", "resetCert", "setWifi", "setSecurity", "applyUpdate", "setDevInfo",
+             "reboot", "updateOta", "setSystemConfig", "setModelConfig",
+             "setUserConfig", "setFavs", "setWiZClick", "setSensor", "setSchd", "setSchdPset",
+             "setCctTable", "setColorProfile", "setScenario", "setWifiBeaconing",
+             "setWifiProcessing", "setSensorConfig", "setPowerProfile", "setCommissioning"}
 
 
 # ── Complete method catalog from 1.36.1 DROM ──
@@ -184,8 +179,9 @@ TESTS = [
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--ip", default=os.environ.get("WIZ_IP"), required="WIZ_IP" not in os.environ)
-    ap.add_argument("--port", type=int, default=38899)
+    ip = os.environ.get("WIZ_IP") or None
+    ap.add_argument("--ip", default=ip, required=ip is None)
+    ap.add_argument("--port", type=int, default=int(os.environ.get("WIZ_PORT", "38899")))
     ap.add_argument("--dangerous", action="store_true", help=f"also send {', '.join(sorted(DANGEROUS))}")
     args = ap.parse_args()
     bulb = WizBulb(args.ip, args.port, timeout=2.0)
@@ -196,7 +192,7 @@ def main():
 
     results = {}
     for i, (method, params) in enumerate(tests):
-        resp = send(bulb, method, params)
+        resp = bulb.probe(method, params)
 
         is_timeout = "_error" in resp and "TIMEOUT" in resp.get("_error", "")
         is_error = "error" in resp

@@ -46,6 +46,13 @@ class WizBulb:
     def call(self, method: str, params: dict | None = None) -> dict | None:
         return self.send({"method": method, "params": params or {}})
 
+    def probe(self, method: str, params: dict | None = None) -> dict:
+        """Like call(), but never raises: timeouts/errors come back as {"_error": ...}."""
+        try:
+            return self.call(method, params) or {"_error": "TIMEOUT (no response)"}
+        except Exception as e:
+            return {"_error": str(e)}
+
     def fade(
         self,
         from_dimming: int | None = None,
@@ -240,7 +247,7 @@ def add_pilot_flags(parser: argparse.ArgumentParser):
 # --------------------------------------------------------------------- main
 
 def build_parser() -> argparse.ArgumentParser:
-    default_ip = os.environ.get("WIZ_IP")
+    default_ip = os.environ.get("WIZ_IP") or None
     default_port = int(os.environ.get("WIZ_PORT", "38899"))
 
     parser = argparse.ArgumentParser(

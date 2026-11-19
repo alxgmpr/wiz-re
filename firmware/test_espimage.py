@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Self-check for espimage + patch_firmware on a synthetic image. Run: python3 firmware/test_espimage.py"""
+"""Self-check for espimage + patch_firmware on a synthetic image. Run: python3 firmware/test_espimage.py (or pytest)"""
 
 import contextlib
 import hashlib
@@ -28,7 +28,7 @@ def build_image():
     return img
 
 
-def main():
+def test_patch_roundtrip():
     img = build_image()
     assert [va for _, va, _ in segments(img)] == [DROM, IROM]
     assert [(n, f) for _, n, _, f in dispatch_table(img)] == \
@@ -57,4 +57,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test_patch_roundtrip()

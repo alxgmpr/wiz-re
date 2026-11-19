@@ -70,7 +70,7 @@ sudo python3 firmware/serve_ota.py firmware/ESP24_SHRGB_01_1.36.1.patched.bin
 
 ### Method discovery tools
 
-These send real commands to a live bulb (`WIZ_IP` or `--ip`). Calls that can reset, reboot, or reconfigure the bulb are skipped unless you pass `--dangerous`.
+These send real commands to a live bulb (`WIZ_IP` or `--ip`). Calls that can reset, reboot, or reconfigure the bulb (including everything `patch_firmware.py` unlocks) are skipped unless you pass `--dangerous`.
 
 - **tools/probe_all_methods.py** — Sends ~120 calls covering 69 methods, categorizing responses as OK, error (with code), or timeout. Writes `probe_results.json` (gitignored; contains your device IDs).
 - **tools/probe_effects_and_params.py** — Parameter probing for setEffect, pulse, registration, setPilot extras, and getSensor. Leaves the bulb at 2700K/100%.
