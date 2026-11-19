@@ -20,12 +20,8 @@ for f in *.bin; do
   echo "============================================"
   echo ""
 
-  # Try ESP32-C6 first (our SHRGB bulb), then C3 (SHRGBW)
-  if [[ "$f" == *SHRGB_* ]]; then
-    CHIP="esp32c6"
-  else
-    CHIP="esp32c3"
-  fi
+  # Stock Wiz modules are ESP32-C3 (the C6 is only our ESPHome replacement board)
+  CHIP="esp32c3"
 
   "$ESPTOOL" --chip "$CHIP" image_info -v 2 "$f" 2>&1 || \
     echo "  Failed to parse with chip ${CHIP}"

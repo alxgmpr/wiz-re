@@ -4,31 +4,20 @@
 Extracted method catalog from firmware 1.36.1 DROM dispatch table.
 """
 
+import argparse
 import json
-import socket
-import sys
+import os
 import time
 
-IP = "10.1.7.59"
-PORT = 38899
-TIMEOUT = 2.0
+from wiz_udp import WizBulb
 
-def send(method, params=None):
-    """Send a JSON method call over UDP, return parsed response or error string."""
-    msg = {"method": method, "params": params or {}}
-    raw = json.dumps(msg).encode()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(TIMEOUT)
-    try:
-        sock.sendto(raw, (IP, PORT))
-        data, _ = sock.recvfrom(4096)
-        return json.loads(data.decode())
-    except socket.timeout:
-        return {"_error": "TIMEOUT (no response)"}
-    except Exception as e:
-        return {"_error": str(e)}
-    finally:
-        sock.close()
+# Skipped unless --dangerous: these can reset, reboot, or reconfigure the bulb
+# if accepted. Includes everything firmware/patch_firmware.py unlocks over UDP.
+DANGEROUS = {"reset", "resetCert", "setWifi", "setSecurity", "applyUpdate", "setDevInfo",
+             "reboot", "updateOta", "setSystemConfig", "setModelConfig",
+             "setUserConfig", "setFavs", "setWiZClick", "setSensor", "setSchd", "setSchdPset",
+             "setCctTable", "setColorProfile", "setScenario", "setWifiBeaconing",
+             "setWifiProcessing", "setSensorConfig", "setPowerProfile", "setCommissioning"}
 
 
 # ── Complete method catalog from 1.36.1 DROM ──
@@ -62,7 +51,7 @@ TESTS = [
 
     # ── Other read/info methods ──
     ("registration", {}),
-    ("registration", {"phoneIp": "10.1.7.1", "register": True, "phoneOs": "linux", "id": "test"}),
+    ("registration", {"phoneIp": "192.0.2.1", "register": True, "phoneOs": "linux", "id": "test"}),
     ("devDebug", {}),
     ("syncBroadcastPilot", {}),
     ("syncScnrEvt", {}),
@@ -189,13 +178,21 @@ TESTS = [
 
 
 def main():
-    print(f"Testing {len(TESTS)} method calls against {IP}:{PORT}")
+    ap = argparse.ArgumentParser(description=__doc__)
+    ip = os.environ.get("WIZ_IP") or None
+    ap.add_argument("--ip", default=ip, required=ip is None)
+    ap.add_argument("--port", type=int, default=int(os.environ.get("WIZ_PORT", "38899")))
+    ap.add_argument("--dangerous", action="store_true", help=f"also send {', '.join(sorted(DANGEROUS))}")
+    args = ap.parse_args()
+    bulb = WizBulb(args.ip, args.port, timeout=2.0)
+    tests = [t for t in TESTS if args.dangerous or t[0] not in DANGEROUS]
+
+    print(f"Testing {len(tests)} method calls against {args.ip}:{args.port}")
     print(f"{'='*80}\n")
 
     results = {}
-    for i, (method, params) in enumerate(TESTS):
-        key = f"{method}({json.dumps(params)})" if params else method
-        resp = send(method, params)
+    for i, (method, params) in enumerate(tests):
+        resp = bulb.probe(method, params)
 
         is_timeout = "_error" in resp and "TIMEOUT" in resp.get("_error", "")
         is_error = "error" in resp
@@ -210,7 +207,7 @@ def main():
         else:
             status = "UNKNOWN"
 
-        print(f"[{i+1:3d}/{len(TESTS)}] {status:12s} {method}")
+        print(f"[{i+1:3d}/{len(tests)}] {status:12s} {method}")
         if params:
             print(f"{'':16s} params: {json.dumps(params)}")
         print(f"{'':16s} resp:   {json.dumps(resp)}")
@@ -247,7 +244,7 @@ def main():
     print(f"Error responses:   {len(methods_err)}")
     print(f"Timeouts:          {len(methods_timeout)}")
 
-    print(f"\n── Methods that returned data ──")
+    print("\n── Methods that returned data ──")
     seen = set()
     for method, call in methods_ok:
         if method not in seen:
@@ -259,7 +256,7 @@ def main():
             else:
                 print(f"  {method}: {result}")
 
-    print(f"\n── Methods that returned errors ──")
+    print("\n── Methods that returned errors ──")
     seen = set()
     for method, call in methods_err:
         k = f"{method}|{call['params']}"
@@ -268,15 +265,15 @@ def main():
             err = call["response"].get("error", {})
             print(f"  {method}({json.dumps(call['params'])}): code={err.get('code')} msg={err.get('message', '')}")
 
-    print(f"\n── Methods that timed out (possibly MQTT-only) ──")
+    print("\n── Methods that timed out (possibly MQTT-only) ──")
     seen = set()
-    for method, call in methods_timeout:
+    for method, _ in methods_timeout:
         if method not in seen:
             seen.add(method)
             print(f"  {method}")
 
     # Dump full results to JSON
-    outpath = "test_results.json"
+    outpath = "probe_results.json"
     with open(outpath, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\nFull results written to {outpath}")

@@ -6,7 +6,7 @@ Communicates with Wiz bulbs via JSON-over-UDP on port 38899.
 Uses only Python stdlib (socket, json, argparse, time, os, sys).
 
 Environment variables:
-    WIZ_IP   — default bulb IP address (default: 10.1.7.59)
+    WIZ_IP   — bulb IP address (or pass --ip)
     WIZ_PORT — default bulb UDP port    (default: 38899)
 """
 
@@ -14,7 +14,6 @@ import argparse
 import json
 import os
 import socket
-import sys
 import time
 
 
@@ -44,61 +43,15 @@ class WizBulb:
 
     # ------------------------------------------------------------ high-level
 
-    def get_pilot(self) -> dict | None:
-        return self.send({"method": "getPilot", "params": {}})
+    def call(self, method: str, params: dict | None = None) -> dict | None:
+        return self.send({"method": method, "params": params or {}})
 
-    def set_pilot(self, **params) -> dict | None:
-        clean = {k: v for k, v in params.items() if v is not None}
-        return self.send({"method": "setPilot", "params": clean})
-
-    def set_state(self, **params) -> dict | None:
-        clean = {k: v for k, v in params.items() if v is not None}
-        return self.send({"method": "setState", "params": clean})
-
-    def get_system_config(self) -> dict | None:
-        return self.send({"method": "getSystemConfig", "params": {}})
-
-    def get_user_config(self) -> dict | None:
-        return self.send({"method": "getUserConfig", "params": {}})
-
-    def get_model_config(self) -> dict | None:
-        return self.send({"method": "getModelConfig", "params": {}})
-
-    def get_dev_info(self) -> dict | None:
-        return self.send({"method": "getDevInfo", "params": {}})
-
-    def set_effect(self, **params) -> dict | None:
-        clean = {k: v for k, v in params.items() if v is not None}
-        return self.send({"method": "setEffect", "params": clean})
-
-    def pulse(self, delta: int, duration: int) -> dict | None:
-        return self.send({"method": "pulse", "params": {"delta": delta, "duration": duration}})
-
-    def get_cct_table(self) -> dict | None:
-        return self.send({"method": "getCctTable", "params": {}})
-
-    def get_favs(self) -> dict | None:
-        return self.send({"method": "getFavs", "params": {}})
-
-    def get_scenario(self) -> dict | None:
-        return self.send({"method": "getScenario", "params": {}})
-
-    def get_power(self) -> dict | None:
-        return self.send({"method": "getPower", "params": {}})
-
-    def get_time(self) -> dict | None:
-        return self.send({"method": "getTime", "params": {}})
-
-    def get_effect(self) -> dict | None:
-        return self.send({"method": "getEffect", "params": {}})
-
-    def get_wifi_processing(self) -> dict | None:
-        return self.send({"method": "getWifiProcessing", "params": {}})
-
-    def registration(self, phone_ip: str, phone_mac: str = "aabbccddeeff") -> dict | None:
-        return self.send({"method": "registration", "params": {
-            "phoneMac": phone_mac, "register": True, "phoneIp": phone_ip, "id": "1",
-        }})
+    def probe(self, method: str, params: dict | None = None) -> dict:
+        """Like call(), but never raises: timeouts/errors come back as {"_error": ...}."""
+        try:
+            return self.call(method, params) or {"_error": "TIMEOUT (no response)"}
+        except Exception as e:
+            return {"_error": str(e)}
 
     def fade(
         self,
@@ -137,7 +90,7 @@ class WizBulb:
                 params["b"] = int(from_rgb[2] + (to_rgb[2] - from_rgb[2]) * t)
 
             if params:
-                resp = self.set_pilot(**params)
+                resp = self.call("setPilot", params)
                 responses.append(resp)
 
             if i < steps - 1:
@@ -169,85 +122,48 @@ def parse_rgb(value: str) -> tuple[int, int, int]:
 
 # ----------------------------------------------------------- CLI sub-commands
 
-def cmd_get_pilot(args, bulb: WizBulb):
-    pp(bulb.get_pilot())
+# Query commands: CLI name -> (method, help). All take no params.
+QUERIES = {
+    "get-pilot": ("getPilot", "query current bulb state"),
+    "get-system-config": ("getSystemConfig", "query system configuration"),
+    "get-user-config": ("getUserConfig", "query user configuration"),
+    "get-model-config": ("getModelConfig", "query model configuration"),
+    "get-dev-info": ("getDevInfo", "query device information"),
+    "get-cct-table": ("getCctTable", "query CCT-to-RGBWC channel mapping"),
+    "get-favs": ("getFavs", "query WizClick favorites"),
+    "get-scenario": ("getScenario", "query automation scenario config"),
+    "get-power": ("getPower", "query power consumption"),
+    "get-time": ("getTime", "query bulb UTC time"),
+    "get-effect": ("getEffect", "query current effect state"),
+    "get-wifi-processing": ("getWifiProcessing", "query WiFi sensing configuration"),
+}
+
+PILOT_FLAGS = {"dimming": "dimming", "temp": "temp", "r": "r", "g": "g", "b": "b",
+               "w": "w", "c": "c", "scene": "sceneId", "speed": "speed"}
 
 
-def cmd_set_pilot(args, bulb: WizBulb):
+def cmd_query(args, bulb: WizBulb):
+    pp(bulb.call(args.method))
+
+
+def cmd_pilot(args, bulb: WizBulb):
+    """setPilot / setState share the same flags; args.method picks which."""
     params: dict = {}
     if args.on:
         params["state"] = True
     elif args.off:
         params["state"] = False
-    if args.dimming is not None:
-        params["dimming"] = args.dimming
-    if args.temp is not None:
-        params["temp"] = args.temp
-    if args.r is not None:
-        params["r"] = args.r
-    if args.g is not None:
-        params["g"] = args.g
-    if args.b is not None:
-        params["b"] = args.b
-    if args.w is not None:
-        params["w"] = args.w
-    if args.c is not None:
-        params["c"] = args.c
-    if args.scene is not None:
-        params["sceneId"] = args.scene
-    if args.speed is not None:
-        params["speed"] = args.speed
-    pp(bulb.set_pilot(**params))
-
-
-def cmd_set_state(args, bulb: WizBulb):
-    params: dict = {}
-    if args.on:
-        params["state"] = True
-    elif args.off:
-        params["state"] = False
-    if args.dimming is not None:
-        params["dimming"] = args.dimming
-    if args.temp is not None:
-        params["temp"] = args.temp
-    if args.r is not None:
-        params["r"] = args.r
-    if args.g is not None:
-        params["g"] = args.g
-    if args.b is not None:
-        params["b"] = args.b
-    if args.w is not None:
-        params["w"] = args.w
-    if args.c is not None:
-        params["c"] = args.c
-    if args.scene is not None:
-        params["sceneId"] = args.scene
-    if args.speed is not None:
-        params["speed"] = args.speed
-    pp(bulb.set_state(**params))
-
-
-def cmd_get_system_config(args, bulb: WizBulb):
-    pp(bulb.get_system_config())
-
-
-def cmd_get_user_config(args, bulb: WizBulb):
-    pp(bulb.get_user_config())
-
-
-def cmd_get_model_config(args, bulb: WizBulb):
-    pp(bulb.get_model_config())
-
-
-def cmd_get_dev_info(args, bulb: WizBulb):
-    pp(bulb.get_dev_info())
+    for flag, key in PILOT_FLAGS.items():
+        if getattr(args, flag) is not None:
+            params[key] = getattr(args, flag)
+    pp(bulb.call(args.method, params))
 
 
 def cmd_set_effect(args, bulb: WizBulb):
     # setEffect expects nested objects: {"preview": {...}}, {"pulse": {...}}, {"stepOff": {...}}
-    mode = args.mode or "preview"
+    mode = args.mode
     if args.stop:
-        pp(bulb.set_effect(**{mode: {"state": 0}}))
+        pp(bulb.call("setEffect", {mode: {"state": 0}}))
         return
     inner: dict = {"state": 1}
     if args.duration is not None:
@@ -271,43 +187,16 @@ def cmd_set_effect(args, bulb: WizBulb):
     params = {mode: inner}
     if args.restore:
         params["orig"] = "current"
-    pp(bulb.set_effect(**params))
+    pp(bulb.call("setEffect", params))
 
 
 def cmd_pulse(args, bulb: WizBulb):
-    pp(bulb.pulse(delta=args.delta, duration=args.duration))
-
-
-def cmd_get_cct_table(args, bulb: WizBulb):
-    pp(bulb.get_cct_table())
-
-
-def cmd_get_favs(args, bulb: WizBulb):
-    pp(bulb.get_favs())
-
-
-def cmd_get_scenario(args, bulb: WizBulb):
-    pp(bulb.get_scenario())
-
-
-def cmd_get_power(args, bulb: WizBulb):
-    pp(bulb.get_power())
-
-
-def cmd_get_time(args, bulb: WizBulb):
-    pp(bulb.get_time())
-
-
-def cmd_get_effect(args, bulb: WizBulb):
-    pp(bulb.get_effect())
-
-
-def cmd_get_wifi_processing(args, bulb: WizBulb):
-    pp(bulb.get_wifi_processing())
+    pp(bulb.call("pulse", {"delta": args.delta, "duration": args.duration}))
 
 
 def cmd_registration(args, bulb: WizBulb):
-    pp(bulb.registration(phone_ip=args.phone_ip))
+    pp(bulb.call("registration", {"phoneMac": "aabbccddeeff", "register": True,
+                                  "phoneIp": args.phone_ip, "id": "1"}))
 
 
 def cmd_raw(args, bulb: WizBulb):
@@ -340,7 +229,7 @@ def cmd_fade(args, bulb: WizBulb):
 # --------------------------------------------------------------- shared flags
 
 def add_pilot_flags(parser: argparse.ArgumentParser):
-    """Add the common --on/--off, --dimming, --temp, --r/--g/--b, --w/--c, --scene, --fade flags."""
+    """Add the common --on/--off, --dimming, --temp, --r/--g/--b, --w/--c, --scene, --speed flags."""
     grp = parser.add_mutually_exclusive_group()
     grp.add_argument("--on", action="store_true", help="turn the bulb on")
     grp.add_argument("--off", action="store_true", help="turn the bulb off")
@@ -358,7 +247,7 @@ def add_pilot_flags(parser: argparse.ArgumentParser):
 # --------------------------------------------------------------------- main
 
 def build_parser() -> argparse.ArgumentParser:
-    default_ip = os.environ.get("WIZ_IP", "10.1.7.59")
+    default_ip = os.environ.get("WIZ_IP") or None
     default_port = int(os.environ.get("WIZ_PORT", "38899"))
 
     parser = argparse.ArgumentParser(
@@ -371,41 +260,23 @@ def build_parser() -> argparse.ArgumentParser:
         )
         % {"ip": default_ip, "port": default_port},
     )
-    parser.add_argument("--ip", default=default_ip, help="bulb IP address")
+    parser.add_argument("--ip", default=default_ip, required=default_ip is None,
+                        help="bulb IP address (default: $WIZ_IP)")
     parser.add_argument("--port", type=int, default=default_port, help="bulb UDP port")
     parser.add_argument("--timeout", type=float, default=1.0, help="UDP response timeout in seconds")
 
     subs = parser.add_subparsers(dest="command", required=True)
 
-    # get-pilot
-    sp = subs.add_parser("get-pilot", help="query current bulb state")
-    sp.set_defaults(func=cmd_get_pilot)
+    for name, (method, help_) in QUERIES.items():
+        subs.add_parser(name, help=help_).set_defaults(func=cmd_query, method=method)
 
-    # set-pilot
     sp = subs.add_parser("set-pilot", help="set bulb state (turns bulb on)")
     add_pilot_flags(sp)
-    sp.set_defaults(func=cmd_set_pilot)
+    sp.set_defaults(func=cmd_pilot, method="setPilot")
 
-    # set-state
     sp = subs.add_parser("set-state", help="set bulb state (does not turn on)")
     add_pilot_flags(sp)
-    sp.set_defaults(func=cmd_set_state)
-
-    # get-system-config
-    sp = subs.add_parser("get-system-config", help="query system configuration")
-    sp.set_defaults(func=cmd_get_system_config)
-
-    # get-user-config
-    sp = subs.add_parser("get-user-config", help="query user configuration")
-    sp.set_defaults(func=cmd_get_user_config)
-
-    # get-model-config
-    sp = subs.add_parser("get-model-config", help="query model configuration")
-    sp.set_defaults(func=cmd_get_model_config)
-
-    # get-dev-info
-    sp = subs.add_parser("get-dev-info", help="query device information")
-    sp.set_defaults(func=cmd_get_dev_info)
+    sp.set_defaults(func=cmd_pilot, method="setState")
 
     # set-effect
     sp = subs.add_parser("set-effect", help="trigger a lighting effect")
@@ -428,37 +299,9 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--duration", type=int, required=True, help="pulse duration in milliseconds")
     sp.set_defaults(func=cmd_pulse)
 
-    # get-cct-table
-    sp = subs.add_parser("get-cct-table", help="query CCT-to-RGBWC channel mapping")
-    sp.set_defaults(func=cmd_get_cct_table)
-
-    # get-favs
-    sp = subs.add_parser("get-favs", help="query WizClick favorites")
-    sp.set_defaults(func=cmd_get_favs)
-
-    # get-scenario
-    sp = subs.add_parser("get-scenario", help="query automation scenario config")
-    sp.set_defaults(func=cmd_get_scenario)
-
-    # get-power
-    sp = subs.add_parser("get-power", help="query power consumption")
-    sp.set_defaults(func=cmd_get_power)
-
-    # get-time
-    sp = subs.add_parser("get-time", help="query bulb UTC time")
-    sp.set_defaults(func=cmd_get_time)
-
-    # get-effect
-    sp = subs.add_parser("get-effect", help="query current effect state")
-    sp.set_defaults(func=cmd_get_effect)
-
-    # get-wifi-processing
-    sp = subs.add_parser("get-wifi-processing", help="query WiFi sensing configuration")
-    sp.set_defaults(func=cmd_get_wifi_processing)
-
     # registration
     sp = subs.add_parser("registration", help="register with bulb (app discovery)")
-    sp.add_argument("--phone-ip", default="10.1.7.1", help="phone/controller IP")
+    sp.add_argument("--phone-ip", required=True, help="phone/controller IP")
     sp.set_defaults(func=cmd_registration)
 
     # raw

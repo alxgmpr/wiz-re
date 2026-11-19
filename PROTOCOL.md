@@ -229,7 +229,7 @@ these strings are only in the `setUserConfig` parameter descriptor table.
 Fade is a **global setting** configured via `setUserConfig` (MQTT-only):
 ```bash
 # Set global 2-second fade via MQTT (requires interception)
-./mqtt/send_mqtt.sh '{"method":"setUserConfig","params":{"fadeIn":2000,"fadeOut":2000,"userConfigTs":N}}'
+WIZ_MAC=<mac> WIZ_HOME_ID=<homeId> ./mqtt/send_mqtt.sh '{"method":"setUserConfig","params":{"fadeIn":2000,"fadeOut":2000,"userConfigTs":N}}'
 # N must increment each call (query current with: wiz_udp.py get-user-config)
 ```
 After setting this, ALL setPilot/setState calls will fade smoothly.

@@ -33,7 +33,7 @@ python3 tools/wiz_udp.py fade --from-dimming 10 --to-dimming 100 --duration 3 --
 python3 tools/wiz_udp.py raw '{"method":"getModelConfig","params":{}}'
 ```
 
-Supports setPilot, setState, setEffect (all modes), pulse, fade ramping, and every get* query. Set `WIZ_IP` and `WIZ_PORT` env vars or pass `--ip`/`--port`.
+Supports setPilot, setState, setEffect (all modes), pulse, fade ramping, and every get* query. Set `WIZ_IP` (required) and `WIZ_PORT` env vars, or pass `--ip`/`--port`.
 
 ### MQTT interception
 
@@ -41,6 +41,7 @@ Supports setPilot, setState, setEffect (all modes), pulse, fade ramping, and eve
 
 ```bash
 cd mqtt && bash setup.sh          # generates certs, starts broker
+export WIZ_MAC=<mac> WIZ_HOME_ID=<homeId>   # both from: tools/wiz_udp.py get-system-config
 ./mqtt/send_mqtt.sh '{"method":"setUserConfig","params":{"fadeIn":700,"fadeOut":700,"userConfigTs":2}}'
 ```
 
@@ -53,7 +54,10 @@ Requires DNS redirect (dnsmasq, /etc/hosts, or router) so the bulb connects to y
 - **esp2elf.py** — Converts ESP-IDF OTA images to ELF32 RISC-V binaries for Ghidra or Binary Ninja. Parses the image header, extracts DROM/DRAM/IRAM/IROM segments with correct load addresses and permissions.
 - **patch_firmware.py** — Binary patches the method dispatch table to unlock MQTT-only methods over UDP. Changes the access flags from 0x04 (cloud-only) to 0x0606 (local+cloud), then recalculates the ESP-IDF checksum and SHA256 hash.
 - **serve_ota.py** — HTTP server on port 80 that serves firmware to the bulb during OTA. Supports bait-and-switch mode (serve original on retries, patched on first download).
-- **download_firmware.sh** — Downloads firmware images from firmware.wiz.world. We analyzed versions 1.21.14 through 1.36.99.
+- **download_firmware.sh** — Downloads firmware images from firmware.wiz.world. We analyzed versions 1.21.14 through 1.36.99; `versions_shrgb.txt` lists every SHRGB version found on the server.
+- **analyze.sh** — Runs `esptool image_info` on downloaded images and prints `dd` commands to extract segments.
+- **dump_dispatch_table.py** — Extracts the full dispatch table from a firmware binary, showing every method name, handler address, and access flags.
+- **espimage.py** — Shared image/segment/dispatch-table parsing used by the tools above. `python3 firmware/test_espimage.py` self-checks it on a synthetic image.
 
 ```bash
 # Convert to ELF for disassembly
@@ -66,18 +70,19 @@ sudo python3 firmware/serve_ota.py firmware/ESP24_SHRGB_01_1.36.1.patched.bin
 
 ### Method discovery tools
 
-- **tools/dump_dispatch_table.py** — Extracts the full dispatch table from a firmware binary, showing every method name, handler address, and access flags.
-- **tools/test_all_methods.py** — Probes 100+ method names against a live bulb, categorizing responses as UDP-accessible, MQTT-only, unsupported, or timeout.
-- **tools/test_effects_and_params.py** — Parameter fuzzing for setEffect, pulse, and registration.
+These send real commands to a live bulb (`WIZ_IP` or `--ip`). Calls that can reset, reboot, or reconfigure the bulb (including everything `patch_firmware.py` unlocks) are skipped unless you pass `--dangerous`.
+
+- **tools/probe_all_methods.py** — Sends ~120 calls covering 69 methods, categorizing responses as OK, error (with code), or timeout. Writes `probe_results.json` (gitignored; contains your device IDs).
+- **tools/probe_effects_and_params.py** — Parameter probing for setEffect, pulse, registration, setPilot extras, and getSensor. Leaves the bulb at 2700K/100%.
 
 ### ESPHome config
 
-`wiz.yaml` — ESPHome replacement firmware config for the bulb. Uses ESP32-C6 board definition with BP5758D LED driver (5 RGBWW channels). This is a nuclear option — complete firmware replacement that gives you full local control but loses all stock Wiz functionality.
+`wiz.yaml` — ESPHome replacement firmware config for the bulb. Targets an ESP32-C6 module we swapped in for the stock ESP32-C3, driving the bulb's BP5758D LED driver (5 RGBWW channels). This is a nuclear option — complete firmware replacement that gives you full local control but loses all stock Wiz functionality.
 
 ## Hardware
 
 - **Bulb:** Wiz PureSmart TruColor (ESP24_SHRGB_01)
-- **Chip:** ESP32-C3 (RISC-V RV32IMC) — the "ESP24" marketing name is misleading
+- **Chip:** ESP32-C3 (RISC-V RV32IMC) — the "ESP24" marketing name is misleading. Our ESPHome build runs on a replacement ESP32-C6 module.
 - **LED driver:** BP5758D over I2C, 5 channels: Blue(ch3), Green(ch2), Red(ch1), Warm White(ch4), Cold White(ch5)
 - **Color temp range:** 1500K–6500K
 - **UDP port:** 38899

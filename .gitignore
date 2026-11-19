@@ -1,11 +1,18 @@
-# macOS resource fork / AppleDouble files
+# macOS
 ._*
 .DS_Store
 
+# Python
+__pycache__/
+
+# Local-only
 secrets.yaml
 .esphome/
-.DS_Store
 .claude/
+CLAUDE.md
+
+# Probe output (written by tools/probe_all_methods.py; contains device IDs)
+*_results.json
 
 # Downloaded/generated firmware binaries (large, reproducible)
 firmware/*.bin

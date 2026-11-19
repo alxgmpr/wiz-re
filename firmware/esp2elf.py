@@ -5,12 +5,11 @@ Parses the ESP-IDF image header, extracts segments, and writes a minimal
 ELF32 little-endian RISC-V binary with proper load addresses.
 """
 
+import os
 import struct
 import sys
-import os
 
-# ESP image header: magic, segment_count, spi_mode, spi_speed_size, entry_addr, ...
-# See: https://docs.espressif.com/projects/esptool/en/latest/esp32c3/advanced-topics/firmware-image-format.html
+from espimage import segments
 
 ESP_IMAGE_MAGIC = 0xE9
 
@@ -26,31 +25,10 @@ PF_X = 1
 
 def parse_esp_image(data):
     """Parse ESP-IDF image, return (entry_addr, [(load_addr, segment_data), ...])."""
-    magic = data[0]
-    if magic != ESP_IMAGE_MAGIC:
-        raise ValueError(f"Bad magic: 0x{magic:02x}, expected 0xE9")
-
-    segment_count = data[1]
-    # Entry address at offset 16 in extended header? Actually at offset 8 in basic header
-    # ESP32-C3 image format: [magic(1), segments(1), spi_mode(1), spi_speed_size(1),
-    #                         entry_point(4), wp_pin(1), spi_drive(3), chip_id(2), min_rev(1), reserved(8), hash_appended(1)]
+    if data[0] != ESP_IMAGE_MAGIC:
+        raise ValueError(f"Bad magic: 0x{data[0]:02x}, expected 0xE9")
     entry_addr = struct.unpack_from('<I', data, 4)[0]
-
-    segments = []
-    offset = 24  # After 24-byte header (basic 8 + extended 16)
-
-    for i in range(segment_count):
-        if offset + 8 > len(data):
-            break
-        load_addr, seg_len = struct.unpack_from('<II', data, offset)
-        offset += 8
-        seg_data = data[offset:offset + seg_len]
-        segments.append((load_addr, seg_data))
-        offset += seg_len
-        # Segments are padded to 16-byte alignment
-        # Actually in ESP-IDF format, no padding between segments in OTA image
-
-    return entry_addr, segments
+    return entry_addr, [(va, data[start:start + n]) for start, va, n in segments(data)]
 
 
 def segments_to_flags(load_addr):
